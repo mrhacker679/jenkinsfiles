@@ -6,6 +6,8 @@ pipeline {
         registryCredential = "ecr:us-east-1:awsecr"
         appRegistry = "148566196525.dkr.ecr.us-east-1.amazonaws.com/vprofileappimg"
         vprofileRegistry = "https://148566196525.dkr.ecr.us-east-1.amazonaws.com"
+        cluster = 'clustername'
+        service = 'servicename'
     }
 
     tools {
@@ -107,11 +109,9 @@ pipeline {
     stage('Upload app image') {
         steps {
             sh '''
-            
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 148566196525.dkr.ecr.us-east-1.amazonaws.com
                 docker push ${appRegistry}:${BUILD_NUMBER}
             '''
-                
             }
         }
     }
@@ -131,4 +131,13 @@ pipeline {
     //         '''
     //     }
     // }
+
+    stage('Deploy to ECS') {
+        steps {
+            withAWS(credentials: 'awscreds', region: 'us-east-2') {
+                sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+            }
+        }
+    }
+
 }
