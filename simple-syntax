@@ -1,0 +1,26 @@
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        // build code
+      }
+    }
+    stage('Test') {
+      steps {
+        // run tests
+      }
+    }
+  }
+  post {
+    always {
+      // perform cleanup tasks or send notifications
+    }
+    success {
+      // send success notifications or trigger other pipelines
+    }
+    failure {
+      // send failure notifications or trigger other pipelines
+    }
+  }
+}
